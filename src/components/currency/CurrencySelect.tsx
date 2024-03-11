@@ -1,10 +1,26 @@
-import CurrencyData from "currency-codes/data";
+
 import Select from "react-select";
 
+const CurrencyData = require('currency-codes/data');
+
 // Props
+
+interface Currency {
+  code: string;
+  number: string;
+  digits: number;
+  currency: string;
+  countries: string[];
+}
+
+interface ICurrencyData {
+  value: string;
+  label: string;
+}
 interface CurrencySelectProps {
   value?: string;
-  onChange?: (currency: string) => void;
+  // onChange?: (value: ICurrencyData | null, actionMeta: ActionMeta<{ action: "select-option" }>) => void;
+  onChange?: (value: string | undefined ) => void;
 }
 
 // Constants
@@ -16,13 +32,13 @@ const CurrencySelect = ({
   onChange,
 }: CurrencySelectProps) => {
   // Prepare data
-  const data = CurrencyData.map(({ code, currency }) => {
+  const data: ICurrencyData[] = CurrencyData.map(({ code, currency }: Currency) => {
     return {
       value: code + " - " + currency,
       label: code + " - " + currency,
     };
   });
-  const defaultValue = { value: value, label: value };
+  const defaultValue: ICurrencyData = { value: value, label: value };
 
   // Render
   return (
@@ -33,8 +49,9 @@ const CurrencySelect = ({
           options={data}
           defaultValue={defaultValue}
           onChange={(newValue) => {
-            onChange(newValue.value);
+            onChange?.(newValue?.value);
           }}
+
         />
       </label>
     </div>
