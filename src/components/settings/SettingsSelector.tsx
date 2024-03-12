@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useCallback, memo, useMemo } from "react";
 import Modal from "react-modal";
-import CountrySelect, { DEFAULT_COUNTRY } from "../country/CountrySelect";
+import CountrySelect, { DEFAULT_COUNTRY, ICountry } from "../country/CountrySelect";
 import LanguageSelect, { DEFAULT_LANGUAGE } from "../language/LanguageSelect";
 import CurrencySelect, { DEFAULT_CURRENCY } from "../currency/CurrencySelect";
 
@@ -16,6 +16,8 @@ DESIRED SCENARIO
 - Clicking the `SettingsSelector`-Button opens a modal dialog.
 - There is a **[Save]** and a **[Cancel]** button, both serving to dismiss the modal.
 - Changes are taking effect only on **[Save]**
+--------------- DONE _-----------------------------
+
 
 FURTHER DETAILS
 - Positioning of the buttons within the modal is not in the scope of this task
@@ -29,7 +31,7 @@ CURRENT SCENARIO
 - It re-renders every time the modal is opened, closed, or on changing the select inputs
 
 DESIRED SCENARIO
-- The `SettingsSelector`-Button only re-renders when relevant data changes (Country, Language, Currency)
+- The `SettingsSelector`-Button only re-renders when relevant data changes (Country, Language, Currency) : still rerenders on save without changing the data
 
 FURTHER DETAILS
 - The `SettingsSelector`-Button has a render counter that will log to the console (do not remove)
@@ -59,11 +61,11 @@ Improved use of TypeScript
 CURRENT SCENARIO
 - In `SettingsSelector`, there are individual `useState()` calls for `Country`, `Language`, and `Currency`.
 - Throughout the entire project, there are several instances of type `any`.
-    Example: 
+    Example:
     ```typescript
     ... = React.useState<any>(DEFAULT_COUNTRY);
     ```
-- Default values are constants that are exported by each component. 
+- Default values are constants that are exported by each component.
     Example:
     ```typescript
     .... { DEFAULT_COUNTRY } from "../country/CountrySelect";
@@ -96,23 +98,48 @@ FURTHER DETAILS
 // Component
 const SettingsSelector = (): JSX.Element => {
   // States
-  const [modalIsOpen, setModalIsOpen] = React.useState<any>(false);
-  const [selectedCountry, setCountry] = React.useState<any>(DEFAULT_COUNTRY);
-  const [selectedCurrency, setCurrency] = React.useState<any>(DEFAULT_CURRENCY);
-  const [selectedLanguage, setLanguage] = React.useState<any>(DEFAULT_LANGUAGE);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+
+  const [selectedSettings, setSelectedSettings] = useState({
+    country: DEFAULT_COUNTRY,
+    currency: DEFAULT_CURRENCY,
+    language: DEFAULT_LANGUAGE,
+  });
 
   // Render Counter
   const counter = useRef(0);
+
+  const modalValuesRef = useRef({
+    country: selectedSettings.country,
+    currency: selectedSettings.currency,
+    language: selectedSettings.language,
+  });
 
   // Actions
   const handleOpen = () => {
     setModalIsOpen(true);
   };
-  const handleClose = () => {
+
+  const handlClose = () => {
     setModalIsOpen(false);
   };
 
-  const button = () => {
+  const handleSave = useCallback(() => {
+    if (
+      modalValuesRef.current.country !== selectedSettings.country ||
+      modalValuesRef.current.currency !== selectedSettings.currency ||
+      modalValuesRef.current.language !== selectedSettings.language
+    ) {
+      setSelectedSettings({
+        country: modalValuesRef.current.country!,
+        currency: modalValuesRef.current.currency,
+        language: modalValuesRef.current.language,
+      });
+    }
+    setModalIsOpen(false);
+  }, [modalValuesRef, selectedSettings, setModalIsOpen]);
+
+  const memoizedButton = useMemo(() => {
     // Increase render count.
     counter.current++;
 
@@ -122,32 +149,32 @@ const SettingsSelector = (): JSX.Element => {
     /* Button */
     return (
       <button onClick={handleOpen}>
-        {selectedCountry.name} - ({selectedCurrency} - {selectedLanguage})
+        {selectedSettings.country.name} - ({selectedSettings.currency} - {selectedSettings.language})
       </button>
     );
-  };
+  }, [selectedSettings])
 
   // Render
   return (
     <div>
-      {button()}
-
+      {memoizedButton}
       {/* Modal */}
       <Modal isOpen={modalIsOpen}>
         {/* Header */}
         <h2>Select your region, currency and language.</h2>
 
         {/* Country */}
-        <CountrySelect value={selectedCountry} onChange={setCountry} />
+        <CountrySelect value={selectedSettings.country} onChange={(value: ICountry) => modalValuesRef.current.country = value} />
 
         {/* Currency */}
-        <CurrencySelect value={selectedCurrency} onChange={setCurrency} />
+        <CurrencySelect value={selectedSettings.currency} onChange={(value: string) => modalValuesRef.current.currency = value } />
 
         {/* Language */}
-        <LanguageSelect language={selectedLanguage} onChange={setLanguage} />
+        <LanguageSelect language={selectedSettings.language} onChange={(value: string) => modalValuesRef.current.language = value } />
 
         {/* Close button */}
-        <button onClick={handleClose}>Close</button>
+        <button onClick={handleSave}>Save</button>
+        <button onClick={handlClose}>Cancel</button>
       </Modal>
     </div>
   );

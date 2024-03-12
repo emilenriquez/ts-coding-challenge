@@ -5,7 +5,7 @@ import Select from "react-select";
 // Props
 interface LanguageSelectProps {
   language?: string;
-  onChange?: (language: string | undefined) => void;
+  onChange?: (language: string) => void;
 }
 
 // Constants
@@ -41,7 +41,7 @@ const LanguageSelect = ({
           options={data}
           defaultValue={defaultValue}
           onChange={(newValue) => {
-            onChange?.(newValue?.value);
+            onChange?.(newValue!.value);
           }}
         />
       </label>

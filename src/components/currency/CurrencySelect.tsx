@@ -20,7 +20,7 @@ interface ICurrencyData {
 interface CurrencySelectProps {
   value?: string;
   // onChange?: (value: ICurrencyData | null, actionMeta: ActionMeta<{ action: "select-option" }>) => void;
-  onChange?: (value: string | undefined ) => void;
+  onChange?: (value: string ) => void;
 }
 
 // Constants
@@ -49,7 +49,7 @@ const CurrencySelect = ({
           options={data}
           defaultValue={defaultValue}
           onChange={(newValue) => {
-            onChange?.(newValue?.value);
+            onChange?.(newValue!.value);
           }}
 
         />

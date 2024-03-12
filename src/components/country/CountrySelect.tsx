@@ -6,25 +6,25 @@ import { CountrySelectOption } from "./CountrySelectOption";
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
 // Props
-interface Country {
+export interface ICountry {
   code: string;
   name: string;
 }
 
-interface ICountryData {
-  value: Country;
+export interface ICountryData {
+  value: ICountry;
   label: string;
 }
 
 interface CountrySelectProps {
-  value?: Country;
-  onChange?: (value: Country | null, actionMeta: ActionMeta<ICountryData>) => void;
+  value?: ICountry;
+  onChange?: (value: ICountry, actionMeta: ActionMeta<ICountryData>) => void;
 }
 
 
 
 // Constants
-export const DEFAULT_COUNTRY: Country = {
+export const DEFAULT_COUNTRY: ICountry = {
   code: "US",
   name: "United States of America",
 };
@@ -54,7 +54,7 @@ export const CountrySelect = ({
           components={{ Option: CountrySelectOption }}
           defaultValue={defaultValue}
           onChange={(newValue, actionMeta) => {
-            onChange?.((newValue as ICountryData)?.value || null, actionMeta);
+            onChange?.((newValue as ICountryData)!.value || null, actionMeta);
           }}
         />
       </label>
