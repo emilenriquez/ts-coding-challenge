@@ -17,7 +17,14 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["types/*"]
+    }
   },
   "include": ["src"]
 }
+
+
+

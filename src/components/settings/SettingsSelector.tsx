@@ -1,8 +1,10 @@
-import React, { useRef, useState, useCallback, memo, useMemo } from "react";
+import { useRef, useState, useCallback, useMemo } from "react";
 import Modal from "react-modal";
 import CountrySelect, { DEFAULT_COUNTRY, ICountry } from "../country/CountrySelect";
 import LanguageSelect, { DEFAULT_LANGUAGE } from "../language/LanguageSelect";
 import CurrencySelect, { DEFAULT_CURRENCY } from "../currency/CurrencySelect";
+import  './SettingsSelector.css'
+
 
 /* --- [TASK] ---
 Changes on modal are only applied on SAVE
@@ -36,6 +38,11 @@ DESIRED SCENARIO
 FURTHER DETAILS
 - The `SettingsSelector`-Button has a render counter that will log to the console (do not remove)
 - Be aware that #1 changes some relevant behaviour for this task
+
+--------------- DONE _-----------------------------
+
+
+
 --- [TASK] --- */
 
 /* --- [TASK] ---
@@ -53,7 +60,9 @@ FURTHER DETAILS
 - Focus on injecting and structuring CSS, using selectors and properties effectively.
 - Feel free to apply your preferred spacing and dimensions; the provided designs mereley serve as examples. Just make sure it is consistent.
 - Bonus points awarded for aesthetically appealing re-design of elements.
+--------------- DONE _-----------------------------
 --- [TASK] --- */
+
 
 /* --- [TASK] ---
 Improved use of TypeScript
@@ -93,7 +102,25 @@ DESIRED SCENARIO
 
 FURTHER DETAILS
 - Downgrading to React 17 is not an option 😉
+
+---- DONE ----
 --- [TASK] --- */
+
+const modalCustomStyle = {
+  content: {
+    fontFamily: "'Helvetica', sans-serif",
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    transition: 'opacity .5s',
+    // width: '80%',
+    inset: '40px',
+    border: '1px solid rgb(204, 204, 204)',
+    background: 'rgb(255, 255, 255)',
+    overflow: 'auto',
+    outline: 'none',
+    padding: '20px'
+  }
+}
 
 // Component
 const SettingsSelector = (): JSX.Element => {
@@ -159,12 +186,13 @@ const SettingsSelector = (): JSX.Element => {
     <div>
       {memoizedButton}
       {/* Modal */}
-      <Modal isOpen={modalIsOpen}>
+      <Modal isOpen={modalIsOpen} style={modalCustomStyle}>
+      {/* <Modal isOpen={modalIsOpen} > */}
         {/* Header */}
-        <h2>Select your region, currency and language.</h2>
+        <h2 className="h2">Select your region, currency and language.</h2>
 
         {/* Country */}
-        <CountrySelect value={selectedSettings.country} onChange={(value: ICountry) => modalValuesRef.current.country = value} />
+        <StyledCountrySelect value={selectedSettings.country} onChange={(value: ICountry) => modalValuesRef.current.country = value} />
 
         {/* Currency */}
         <CurrencySelect value={selectedSettings.currency} onChange={(value: string) => modalValuesRef.current.currency = value } />
@@ -172,9 +200,18 @@ const SettingsSelector = (): JSX.Element => {
         {/* Language */}
         <LanguageSelect language={selectedSettings.language} onChange={(value: string) => modalValuesRef.current.language = value } />
 
-        {/* Close button */}
-        <button onClick={handleSave}>Save</button>
-        <button onClick={handlClose}>Cancel</button>
+
+        <div className="button-container">
+          {/* Save button */}
+          <button onClick={handleSave} className="button button-primary">
+            Save
+          </button>
+
+          {/* Cancel button */}
+          <button onClick={handlClose} className="button button-secondary">
+            Cancel
+          </button>
+        </div>
       </Modal>
     </div>
   );

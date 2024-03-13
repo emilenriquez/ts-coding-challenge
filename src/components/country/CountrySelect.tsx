@@ -46,18 +46,18 @@ export const CountrySelect = ({
 
   // Render
   return (
-    <div>
+    <div className="select-group">
       <label>
         Country
-        <Select
-          options={data}
-          components={{ Option: CountrySelectOption }}
-          defaultValue={defaultValue}
-          onChange={(newValue, actionMeta) => {
-            onChange?.((newValue as ICountryData)!.value || null, actionMeta);
-          }}
-        />
       </label>
+      <Select
+        options={data}
+        components={{ Option: CountrySelectOption }}
+        defaultValue={defaultValue}
+        onChange={(newValue, actionMeta) => {
+          onChange?.((newValue as ICountryData)!.value || null, actionMeta);
+        }}
+      />
     </div>
   );
 };

@@ -42,18 +42,18 @@ const CurrencySelect = ({
 
   // Render
   return (
-    <div>
+    <div className="select-group">
       <label>
         Currency
-        <Select
-          options={data}
-          defaultValue={defaultValue}
-          onChange={(newValue) => {
-            onChange?.(newValue!.value);
-          }}
-
-        />
       </label>
+      <Select
+        options={data}
+        defaultValue={defaultValue}
+        onChange={(newValue) => {
+          onChange?.(newValue!.value);
+        }}
+
+      />
     </div>
   );
 };

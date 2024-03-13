@@ -1,0 +1,5 @@
+label {
+  display: block; /* Ensures the label takes the full width available */
+  margin-bottom: 8px; /* Adjust margin as needed */
+  font-weight: 500;
+}
